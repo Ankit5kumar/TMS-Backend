@@ -77,7 +77,8 @@ const login = async (req, res) => {
       return res.status(401).json({ msg: "invalid credentials" });
     const token = jwt.sign(
       { id: user._id, roles: user.roles },
-      process.env.JWT_SECRET,
+      // process.env.JWT_SECRET,
+      "secret_key",
       {expiresIn:'2h'}
     );
     // res.setHeader("Authorization", `Bearer ${token}`);
