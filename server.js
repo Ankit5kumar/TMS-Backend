@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socket.init(server , {
    cors: {
-      origin: "https://ticket-management-frontend.netlify.app/",
+      origin: "https://tms-backend-h9a0.onrender.com",
       methods: ["*"]
     }
 });
