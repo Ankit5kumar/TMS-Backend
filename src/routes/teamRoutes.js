@@ -4,7 +4,7 @@ const { verifyToken , checkBlacllist } = require('../middleware/authMiddleware')
 const { authorizeRoles } = require('../middleware/roleMiddleware');
 const Team = require('../Controller/teamController')
 
-router.post('/',verifyToken , checkBlacllist ,authorizeRoles('Admin'), Team.TeamCreation);
+router.post('/',verifyToken , checkBlacllist ,authorizeRoles('Admin' , 'Manager'), Team.TeamCreation);
 router.get('/',verifyToken , checkBlacllist,authorizeRoles('Admin','Manager'), Team.getTeam);
 
 module.exports = router;

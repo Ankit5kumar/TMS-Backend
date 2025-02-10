@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+
 const Task = require("../models/Task");
 const Team = require("../models/Team");
 const User = require("../models/User");
-
+const { getIo } = require("../utils/socket");
 const createTask = async (req, res) => {
   const {
     title,
@@ -65,6 +65,7 @@ console.log("dueDate",dueDate)
 
   try {
     const userToAssign = await User.findById(assignedTo);
+    console.log()
     if (!userToAssign) return res.status(404).json({ msg: "User not found" });
 
     let effectiveManagerId = null;
@@ -98,10 +99,12 @@ console.log("dueDate",dueDate)
       CreatedBy: req.user.id,
       managerId: effectiveManagerId,
       assignedTo: assignedTo || null,
+      
     };
 
     const task = await Task.create(taskData);
-
+    const io = getIo();
+    io.emit('taskAssigned',task)
     return res.status(201).json({ msg: "Task Created", task });
   } catch (error) {
     console.log(error);
@@ -112,7 +115,7 @@ console.log("dueDate",dueDate)
 const getTasks = async (req, res) => {
   try {
     const tasks = await Task.find({ assignedTo: req.user.id }).populate(
-      "assignedTo"
+      "assignedTo" , 
     );
     return res.json({ msg: "Assigned tasks", tasks });
   } catch (error) {
@@ -122,7 +125,8 @@ const getTasks = async (req, res) => {
 };
 const TaskbyManager = async (req, res) => {
   try {
-    const tasks = await Task.find({ managerId: req.user.id })
+    const tasks = await Task.find({ managerId: req.user.id }).populate( "assignedTo" , "username" );
+      
     if(!tasks) return res.status(200).json({msg:"No task found"})
     return res.json({ msg: "CreatedByManager", tasks });
   } catch (error) {
@@ -160,8 +164,10 @@ const update = async (req, res) => {
       if (priority) task.priority = priority;
       if (status) task.status = status;
       if (assignedTo) task.assignedTo = assignedTo;
-console.log("updated",task)
+
       await task.save(); // Save updated task
+      const io = getIo();
+      io.emit('taskUpdated',task)
       return res.status(200).json({ msg: "Task updated successfully" });
   } catch (error) {
       console.error(error);
@@ -183,7 +189,8 @@ const deleteTask = async (req, res) => {
     // }
 
     await Task.findByIdAndDelete(id);
-
+    const io = getIo();
+   io.emit('taskDeleted',task._id)
     return res.status(200).json({ message: "Task deleted successfully" });
   } catch (error) {
     console.error(error);
