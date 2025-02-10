@@ -10,8 +10,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socket.init(server , {
    cors: {
-      origin: "http://localhost:3000",
-      methods: ["GET", "POST"]
+      origin: "https://ticket-management-frontend.netlify.app/",
+      methods: ["*"]
     }
 });
 
