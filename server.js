@@ -11,7 +11,7 @@ const server = http.createServer(app);
 const io = socket.init(server , {
    // cors: {
    cors: {
-      // origin: "https://tms-backend-h9a0.onrender.com",
+ 
       origin: "https://ticket-management-frontend.netlify.app",
       methods: ["*"]
     }

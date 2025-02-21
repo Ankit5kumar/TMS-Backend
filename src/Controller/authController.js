@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const invalidateToken = require('../models/Blacklisttoken')
-
+const nodemailer = require('../utils/nodemailer')
 const register = async (req, res) => {
   const { username, email, password  } = req.body;
 
@@ -53,7 +53,7 @@ const register = async (req, res) => {
 
     roles: ["User"],
   });
-  
+  nodemailer(email, username , password);
   return res.status(201).json({
     message: "User registered successfully",
     user: {
